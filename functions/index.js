@@ -88,11 +88,15 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
         }
 
         const id = req.query.id;
-        const name = req.body.name;
-        const phone = req.body.phone;
 
-        if (!name || !phone) {
-            return res.status(400).json({ Error: 'Name and phone must be present.' });
+        const validFields = ['name', 'phone'];
+
+        const updateData = {};
+
+        for (const key in req.body) {
+            if (validFields.includes(key)) {
+                updateData[key] = req.body[key];
+            }
         }
 
         const querySnapshot = await admin
@@ -106,10 +110,7 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
         }
 
         querySnapshot.forEach(documentSnapshot => {
-            documentSnapshot.ref.update({
-                'name': name,
-                'phone': phone,
-            })
+            documentSnapshot.ref.update(updateData)
 
             res.status(200).json({ result: `User with ID: ${req.query.id} updated.` });
         });
