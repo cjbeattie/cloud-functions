@@ -91,6 +91,10 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
         const name = req.body.name;
         const phone = req.body.phone;
 
+        if (!name || !phone) {
+            return res.status(400).json({ Error: 'Name and phone must be present.' });
+        }
+
         const querySnapshot = await admin
             .firestore()
             .collection('users')
