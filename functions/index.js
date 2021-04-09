@@ -1,4 +1,5 @@
-// firebase emulators:start
+// To run the emulator:
+// firebase emulators: start
 // http://localhost:4000/
 
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
@@ -23,7 +24,7 @@ exports.createUser = functions.https.onRequest(async (req, res) => {
         const phone = req.body.phone;
 
         if (!name || !phone) {
-            res.status(400).json({ Error: 'Name and phone must be present.' });
+            return res.status(400).json({ Error: 'Name and phone must be present.' });
         }
 
         const writeResult = await admin.firestore().collection('users').add(
@@ -36,7 +37,7 @@ exports.createUser = functions.https.onRequest(async (req, res) => {
 
     } catch (err) {
 
-        res.status(500).json({ Error: 'Unknown error' });
+        return res.status(500).json({ Error: err });
 
     }
 })
@@ -59,7 +60,7 @@ exports.readUser = functions.https.onRequest(async (req, res) => {
             .get();
 
         if (querySnapshot.empty) {
-            res.status(404).json({ Error: `A user with the id ${req.query.id} does not exist.` });
+            return res.status(404).json({ Error: `A user with the id ${req.query.id} does not exist.` });
         }
 
         // Needs to be enumerated, see https://googleapis.dev/nodejs/firestore/latest/QuerySnapshot.html
@@ -69,7 +70,7 @@ exports.readUser = functions.https.onRequest(async (req, res) => {
 
     } catch (err) {
 
-        res.status(500).json({ Error: 'Unknown error' });
+        return res.status(500).json({ Error: 'Unknown error' });
 
     }
 
@@ -97,7 +98,7 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
             .get();
 
         if (querySnapshot.empty) {
-            res.status(404).json({ Error: `A user with the id ${req.query.id} does not exist.` });
+            return res.status(404).json({ Error: `A user with the id ${req.query.id} does not exist.` });
         }
 
         querySnapshot.forEach(documentSnapshot => {
@@ -111,7 +112,7 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
 
     } catch (err) {
 
-        res.status(500).json({ Error: 'Unknown error' });
+        return res.status(500).json({ Error: 'Unknown error' });
 
     }
 
@@ -136,7 +137,7 @@ exports.deleteUser = functions.https.onRequest(async (req, res) => {
             .get();
 
         if (querySnapshot.empty) {
-            res.status(404).json({ Error: `A user with the id ${req.query.id} does not exist.` });
+            return res.status(404).json({ Error: `A user with the id ${req.query.id} does not exist.` });
         }
 
         querySnapshot.forEach(documentSnapshot => {
@@ -147,7 +148,7 @@ exports.deleteUser = functions.https.onRequest(async (req, res) => {
 
     } catch (err) {
 
-        res.status(500).json({ Error: 'Unknown error' });
+        return res.status(500).json({ Error: 'Unknown error' });
 
     }
 })
