@@ -257,3 +257,57 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
 
 })
 
+exports.deleteUser = functions.https.onRequest(async (req, res) => {
+    if (req.method !== 'DELETE') {
+        console.log('method: ', req.method)
+        return res.status(405).send('Method Not Allowed');
+    }
+
+    const id = req.query.id;
+
+    try {
+
+        const doc = await admin
+            .firestore()
+            .collection('users')
+            .where(admin.firestore.FieldPath.documentId(), '==', id)
+            .get();
+
+        try {
+            doc.forEach(documentSnapshot => {
+                documentSnapshot.ref.delete()
+
+                res.status(200).send('Document deleted');
+            });
+
+        } catch (err) {
+            console.log(err);
+            res.json(err);
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.json(err);
+    }
+
+    // const doc = await admin
+    //     .firestore()
+    //     .collection('users')
+    //     .where(admin.firestore.FieldPath.documentId(), '==', id)
+    //     .get()
+    //     .then(querySnapshot => {
+    //         querySnapshot.forEach(documentSnapshot => {
+
+    //             documentSnapshot.ref.update({
+    //                 'name': name,
+    //                 'phone': phone,
+    //             }).then(() => {
+    //                 res.status(200).send('Document updated');
+    //             }).catch()
+
+
+    //         });
+    //     })
+
+})
+
