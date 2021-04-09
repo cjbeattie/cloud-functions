@@ -3,22 +3,22 @@
 ## Endpoints
 
 ### Create user:
-[POST] createUser
+[POST] /createUser
 
 Requires the following fields:
 - name (required)
 - phone (required)
 
 ### Read user:
-[GET] readUser?id=*userID*
+[GET] /readUser?id=*userID*
 
 ### Update user:
 
 [PUT] updateUser?id=*userID*
 
-Requires the following fields:
-- name (required)
-- phone (required)
+May include the following fields:
+- name (optional)
+- phone (optional)
 
 ### Delete user:
 [DELETE] deleteUser?id=*userID*

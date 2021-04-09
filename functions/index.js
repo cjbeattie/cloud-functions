@@ -87,6 +87,10 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
             return res.status(405).json({ error: 'Method not allowed' });
         }
 
+        if (JSON.stringify(req.body) === JSON.stringify({})) {
+            return res.status(400).json({ Error: 'Name or phone must be present.' });
+        }
+
         const id = req.query.id;
 
         const validFields = ['name', 'phone'];
@@ -96,6 +100,8 @@ exports.updateUser = functions.https.onRequest(async (req, res) => {
         for (const key in req.body) {
             if (validFields.includes(key)) {
                 updateData[key] = req.body[key];
+            } else {
+                return res.status(400).json({ Error: `${key} is invalid.` });
             }
         }
 
