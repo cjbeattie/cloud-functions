@@ -37,7 +37,7 @@ exports.createUser = functions.https.onRequest(async (req, res) => {
 
     } catch (err) {
 
-        return res.status(500).json({ Error: err });
+        return res.status(500).json({ Error: 'Unknown error' });
 
     }
 })
