@@ -149,7 +149,7 @@ exports.createUser = functions.https.onRequest(async (req, res) => {
             phone: phone,
         });
     // Send back a message that we've successfully written the message
-    res.json({ result: `User with ID: ${writeResult.id} added.` });
+    res.status(201).json({ result: `User with ID: ${writeResult.id} added.` });
 
 })
 
@@ -168,7 +168,7 @@ exports.readUser = functions.https.onRequest(async (req, res) => {
             .get();
 
         doc.forEach(documentSnapshot => {
-            res.json(documentSnapshot.data());
+            res.status(200).json(documentSnapshot.data());
         });
 
         //res.json(doc.data());
@@ -185,10 +185,75 @@ exports.readUser = functions.https.onRequest(async (req, res) => {
     //     .get()
     //     .then(querySnapshot => {
     //         querySnapshot.forEach(documentSnapshot => {
-    //             res.json(documentSnapshot.data());
+    //             if (!documentSnapshot) {
+    //                 res.err('No document found')
+    //             }
+    //             res.status(200).json(documentSnapshot.data());
     //         });
-    //     });
-
-
-    // res.json(doc);
+    //     })
+    // // .catch((err) => {
+    // //     console.log(err)
+    // //     res.send(err);
+    // // })
 })
+
+exports.updateUser = functions.https.onRequest(async (req, res) => {
+    if (req.method !== 'PUT') {
+        console.log('method: ', req.method)
+        return res.status(405).send('Method Not Allowed');
+    }
+
+    const id = req.query.id;
+    const name = req.body.name;
+    const phone = req.body.phone;
+
+    try {
+
+        const doc = await admin
+            .firestore()
+            .collection('users')
+            .where(admin.firestore.FieldPath.documentId(), '==', id)
+            .get();
+
+
+        try {
+            doc.forEach(documentSnapshot => {
+                documentSnapshot.ref.update({
+                    'name': name,
+                    'phone': phone,
+                })
+
+                res.status(200).send('Document updated');
+            });
+
+        } catch (err) {
+            console.log(err);
+            res.json(err);
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.json(err);
+    }
+
+    // const doc = await admin
+    //     .firestore()
+    //     .collection('users')
+    //     .where(admin.firestore.FieldPath.documentId(), '==', id)
+    //     .get()
+    //     .then(querySnapshot => {
+    //         querySnapshot.forEach(documentSnapshot => {
+
+    //             documentSnapshot.ref.update({
+    //                 'name': name,
+    //                 'phone': phone,
+    //             }).then(() => {
+    //                 res.status(200).send('Document updated');
+    //             }).catch()
+
+
+    //         });
+    //     })
+
+})
+
