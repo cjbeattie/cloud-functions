@@ -16,9 +16,9 @@ Requires the following fields:
 
 [PUT] updateUser?id=*userID*
 
-May include the following fields:
-- name (optional)
-- phone (optional)
+Must include one or more of the following fields:
+- name
+- phone
 
 ### Delete user:
 [DELETE] deleteUser?id=*userID*
